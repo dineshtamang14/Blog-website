@@ -3,6 +3,24 @@ import Head from 'next/head'
 import Link from 'next/link';
 import { GET_ALL_POSTS } from '../graphql/queries';
 
+
+export const getSaticProps = async () => {
+  const client = new ApolloClient({
+    uri: "http://localhost:1337/graphql",
+    cache: new InMemoryCache()
+  });
+
+  const { data } = await client.query({
+    query: GET_ALL_POSTS
+  })
+
+  return {
+    props: {
+      posts: data.blogPosts.data
+    }
+  }
+}
+
 export default function Home({ posts }) {
   console.log(posts);
   return (
@@ -31,22 +49,4 @@ export default function Home({ posts }) {
       })}
     </div>
   )
-}
-
-export async function getStaticProps() {
-
-  const client = new ApolloClient({
-    uri: "http://localhost:1337/graphql",
-    cache: new InMemoryCache()
-  });
-
-  const { data } = await client.query({
-    query: GET_ALL_POSTS
-  })
-
-  return {
-    props: {
-      posts: data.blogPosts.data
-    }
-  }
 }
